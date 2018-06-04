@@ -17,7 +17,6 @@ beforeEach((done)=>{
 describe('POST /todos', ()=>{
     it('Sould create a new TODO entry',(done)=>{
         var text = 'Test TODO text by using supertest';
-
         request(app)
         .post('/todos')
         //We are sending by POST the text defined above. JSON method is not required by supertest
@@ -39,8 +38,29 @@ describe('POST /todos', ()=>{
                 done();
             }).catch((e)=>{
                 done(e);
-            })
+            });
+        });
+    });
+
+    //Second test case
+    it('Should not create TODO with invalid body data', (done)=>{
+        request(app)
+        .post('/todos')
+        //I pass an empty text
+        .send({})
+        .expect(400)
+        .end((err,res) => {
+            if(err){
+            return done(err);
+            }
+            Todo.find().then((todos)=>{
+            //We expect 0 as result from the DB
+            expect(todos.length).toBe(0);
+            done();
+            }).catch((e)=>{
+                done(e);
         });
     });
 });
 
+});
